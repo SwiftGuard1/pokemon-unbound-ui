@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Pokémon Unbound ✦ Emulator</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- EmulatorJS -->
+<script src="https://cdn.emulatorjs.org/loader.js"></script>
+
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --glass-bg: rgba(20, 20, 30, 0.55);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --accent: #7c8cff;
+  --accent-glow: rgba(124, 140, 255, 0.5);
+}
+
+* {
+  box-sizing: border-box;
+  font-family: "Inter", system-ui, sans-serif;
+}
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: radial-gradient(circle at top, #1b1f3b, #050510 70%);
+  color: white;
+  overflow: hidden;
+}
+
+/* ───────────────────── Layout ───────────────────── */
+
+#app {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+#header {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  backdrop-filter: blur(18px);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  padding: 14px 26px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  z-index: 20;
+  box-shadow: 0 0 40px rgba(0,0,0,.4);
+}
+
+#header h1 {
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  margin: 0;
+  opacity: 0.95;
+}
+
+button {
+  background: linear-gradient(135deg, var(--accent), #9f7cff);
+  border: none;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 0 18px var(--accent-glow);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
+button:hover {
+  transform: translateY(-1px) scale(1.04);
+  box-shadow: 0 0 28px var(--accent-glow);
+}
+
+/* ───────────────────── Emulator ───────────────────── */
+
+#emulator-wrapper {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#emulator {
+  width: min(92vw, 1100px);
+  height: min(92vh, 700px);
+  border-radius: 22px;
+  overflow: hidden;
+  border: 1px solid var(--glass-border);
+  box-shadow:
+    0 0 60px rgba(0,0,0,.7),
+    inset 0 0 0 1px rgba(255,255,255,.05);
+}
+
+/* ───────────────────── Sheet Overlay ───────────────────── */
+
+#sheet-overlay {
+  position: absolute;
+  inset: 0;
+  backdrop-filter: blur(22px);
+  background: rgba(5, 8, 20, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .35s ease;
+  z-index: 30;
+}
+
+#sheet-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#sheet-container {
+  width: min(90vw, 1100px);
+  height: min(85vh, 720px);
+  border-radius: 22px;
+  overflow: hidden;
+  border: 1px solid var(--glass-border);
+  background: black;
+  box-shadow: 0 0 70px rgba(0,0,0,.8);
+}
+
+#sheet-container iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* ───────────────────── Subtle Glow ───────────────────── */
+
+#ambient-glow {
+  position: absolute;
+  inset: -40%;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(124,140,255,.12), transparent 40%),
+    radial-gradient(circle at 70% 80%, rgba(159,124,255,.12), transparent 45%);
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 0;
+}
+</style>
+</head>
+
+<body>
+<div id="app">
+
+  <div id="ambient-glow"></div>
+
+  <div id="header">
+    <h1>Pokémon Unbound</h1>
+    <button onclick="toggleSheet()">Toggle Sheet</button>
+  </div>
+
+  <div id="emulator-wrapper">
+    <div id="emulator"></div>
+  </div>
+
+  <div id="sheet-overlay" onclick="toggleSheet()">
+    <div id="sheet-container" onclick="event.stopPropagation()">
+      <iframe
+        src="https://docs.google.com/spreadsheets/d/e/YOUR_SHEET_ID/pubhtml?widget=true&headers=false">
+      </iframe>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function toggleSheet() {
+  document.getElementById("sheet-overlay").classList.toggle("active");
+}
+
+/* ───────────────────── EmulatorJS Init ───────────────────── */
+
+EJS_player = "#emulator";
+EJS_core = "gba";
+EJS_gameName = "Pokemon Unbound";
+EJS_pathtodata = "https://cdn.emulatorjs.org/data/";
+EJS_gameUrl = "roms/pokemon-unbound.gba"; // YOU provide this
+EJS_startOnLoaded = true;
+EJS_fullscreenOnDoubleClick = true;
+</script>
+</body>
+</html>
