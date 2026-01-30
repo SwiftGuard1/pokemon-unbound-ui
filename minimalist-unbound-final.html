@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Emulator + Sheet Overlay</title>
+
+    <style>
+        :root {
+            --accent: #982abc;
+            --bg-dim: rgba(0, 0, 0, 0.55);
+            --transition-fast: 0.25s ease;
+            --transition-slow: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #000;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        #game {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Toggle button */
+        #sheetToggle {
+            position: fixed;
+            top: 14px;
+            right: 14px;
+            z-index: 1001;
+            padding: 8px 14px;
+            font-size: 13px;
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 999px;
+            cursor: pointer;
+            backdrop-filter: blur(6px);
+            transition:
+                background var(--transition-fast),
+                transform var(--transition-fast),
+                border var(--transition-fast),
+                opacity var(--transition-fast);
+        }
+
+        #sheetToggle:hover {
+            background: rgba(255, 255, 255, 0.14);
+        }
+
+        #sheetToggle:active {
+            transform: scale(0.96);
+        }
+
+        /* Overlay backdrop */
+        #sheetOverlay {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-dim);
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity var(--transition-slow);
+        }
+
+        #sheetOverlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* Overlay content */
+        #sheetContainer {
+            width: min(92%, 1100px);
+            height: 90%;
+            background: #ffffff;
+            border-radius: 14px;
+            overflow: hidden;
+            position: relative;
+            transform: scale(0.96);
+            opacity: 0;
+            transition:
+                transform var(--transition-slow),
+                opacity var(--transition-slow);
+        }
+
+        #sheetOverlay.active #sheetContainer {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        #sheetContainer iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Close button */
+        #closeSheet {
+            position: absolute;
+            top: 10px;
+            right: 12px;
+            background: rgba(0, 0, 0, 0.55);
+            color: #fff;
+            border: none;
+            padding: 6px 10px;
+            font-size: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            backdrop-filter: blur(6px);
+            transition:
+                background var(--transition-fast),
+                transform var(--transition-fast),
+                opacity var(--transition-fast);
+        }
+
+        #closeSheet:hover {
+            background: rgba(0, 0, 0, 0.75);
+        }
+
+        #closeSheet:active {
+            transform: scale(0.94);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="game"></div>
+
+    <button id="sheetToggle">Sheet</button>
+
+    <div id="sheetOverlay">
+        <div id="sheetContainer">
+            <button id="closeSheet">Close</button>
+            <iframe
+                src="https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID_HERE/preview"
+                loading="lazy">
+            </iframe>
+        </div>
+    </div>
+
+    <!-- EmulatorJS -->
+    <script>
+        EJS_player = "#game";
+        EJS_core = "gba";
+        EJS_gameName = "Pokémon Unbound";
+        EJS_color = "#982abc";
+        EJS_startOnLoaded = true;
+        EJS_pathtodata = "https://cdn.emulatorjs.org/stable/data/";
+        EJS_gameUrl = "https://raw.githubusercontent.com/SwiftGuard1/unboundGame/main/pokemonunbound.zip";
+    </script>
+    <script src="https://cdn.emulatorjs.org/stable/data/loader.js"></script>
+
+    <!-- Overlay logic -->
+    <script>
+        const toggle = document.getElementById("sheetToggle");
+        const overlay = document.getElementById("sheetOverlay");
+        const closeBtn = document.getElementById("closeSheet");
+
+        function openOverlay() {
+            overlay.classList.add("active");
+        }
+
+        function closeOverlay() {
+            overlay.classList.remove("active");
+        }
+
+        toggle.addEventListener("click", openOverlay);
+        closeBtn.addEventListener("click", closeOverlay);
+
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") closeOverlay();
+        });
+
+        // Close if clicking backdrop
+        overlay.addEventListener("click", (e) => {
+            if (e.target === overlay) closeOverlay();
+        });
+    </script>
+
+</body>
+</html>
